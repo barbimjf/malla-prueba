@@ -11,6 +11,12 @@
             padding: 20px;
             background: #e0f2f7; /* Azul pastel muy claro */
             color: #333; /* Texto negro para mejor contraste */
+            /* Fondo de cerebro y corazón */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c0e0eb' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2 C 8 2, 5 5, 5 10, 7 15, 12 22 M12 2 C 17 5, 19 10, 17 15, 12 22'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 30px 30px; /* Tamaño pequeño para los iconos */
+            background-attachment: fixed; /* Para que los iconos no se desplacen con el contenido */
+            background-blend-mode: overlay; /* Para que se mezclen sutilmente con el fondo */
         }
         h1 {
             text-align: center;
@@ -44,56 +50,57 @@
             text-align: center;
         }
 
-        /* Estilos de la malla principal */
-        .malla {
-            display: flex;
-            overflow-x: auto;
+        /* Contenedor principal de la malla para el layout de años y bloques */
+        .malla-container {
+            display: grid;
+            grid-template-columns: auto 100px; /* Primera columna para años, segunda para título */
+            grid-template-rows: auto auto; /* Primera fila para Año 1, segunda para Año 2 */
             gap: 20px;
+            justify-content: center; /* Centrar la cuadrícula completa */
+            align-items: start; /* Alinear los elementos al inicio de su área de cuadrícula */
             padding-bottom: 40px;
-            justify-content: flex-start;
+            width: fit-content; /* Ajustar el ancho al contenido */
+            margin: 0 auto; /* Centrar el contenedor mismo */
         }
 
-        /* Agrupación por año */
-        .year-group {
+        .year-column {
             display: flex;
             flex-direction: column;
             gap: 15px;
             align-items: center;
-            min-width: 400px;
             padding: 10px;
-            background: #e3f2fd; /* Azul muy claro para el grupo de año */
+            background: #e3f2fd;
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border: 1px solid #90caf9;
+            flex-shrink: 0;
         }
 
-        /* Título del año dentro del grupo */
-        .year-group .anio {
-            writing-mode: horizontal-tb;
-            transform: none;
-            border-left: none;
-            border-bottom: 4px solid #2196f3; /* Azul medio */
-            padding: 8px 15px;
-            width: fit-content;
-            margin-bottom: 5px;
-            font-size: 1.3em;
-            color: #2196f3;
-            background: #bbdefb;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        /* Título del año */
+        .year-header {
+            text-align: center;
+            color: #2196f3; /* Azul medio */
+            margin-top: 0; /* Reset margin */
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-bottom: 4px solid #2196f3;
+            padding-bottom: 5px;
+            width: fit-content; /* Ajustar ancho al contenido */
+            padding-left: 15px; /* Para que el borde inferior se vea bien */
+            padding-right: 15px;
         }
 
-        /* Contenedor de los bimestres dentro de un año (grid para mejor control) */
-        .bimestres-del-anio {
+        /* Contenedor de los bimestres dentro de un año */
+        .bimestres-grid-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(5, minmax(180px, 1fr)); /* 5 columnas para los bimestres */
             gap: 20px;
+            padding: 0; /* No padding here, padding is on year-column */
+            width: 100%; /* Ocupar todo el ancho del year-column */
+            box-sizing: border-box; /* Incluir padding en el ancho */
+            align-items: start; /* Alinear los elementos al inicio de su área de cuadrícula */
         }
-        /* Para el último año que solo tiene 1 bimestre en la primera fila */
-        .year-group:last-of-type .bimestres-del-anio {
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        }
-
 
         .bimestre {
             display: flex;
@@ -102,6 +109,8 @@
             border-radius: 10px;
             padding: 10px;
             min-width: 180px;
+            width: auto; /* Dejar que la cuadrícula determine el ancho */
+            height: 100%; /* Llenar la altura de la celda de la cuadrícula */
             border: 1px solid #90caf9;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
@@ -135,29 +144,47 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Estilos para los separadores de Título (VERTICALES) */
-        .separator, .titulo-final {
-            writing-mode: vertical-lr;
-            transform: rotate(180deg);
+        /* Bloque visual para Práctica Profesional que abarca varios bimestres */
+        .practica-visual-span-in-grid {
+            background-color: #bbdefb; /* Azul pastel */
+            color: #1a237e; /* Azul oscuro para texto */
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
             font-weight: bold;
-            color: #1976d2; /* Azul oscuro */
-            background: #bbdefb; /* Azul pastel */
-            padding: 10px;
-            border-left: 4px solid #2196f3; /* Azul medio */
-            font-size: 1.1em;
-            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #90caf9;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 10px;
-            flex-shrink: 0;
+            min-height: 80px; /* Altura mínima para que sea visible */
+            grid-column: 3 / span 3; /* Abarca desde la columna 3 (Bimestre 8) y se extiende por 3 columnas */
+            grid-row: 2; /* Se coloca en la segunda fila de la cuadrícula */
         }
 
+        /* Estilos para el Título Profesional Final (ahora es un elemento de la cuadrícula principal) */
         .titulo-final {
-            border-color: #2196f3;
+            writing-mode: vertical-lr; /* Texto vertical */
+            transform: rotate(180deg); /* Rotar para leer de abajo hacia arriba */
+            text-align: center;
+            font-weight: bold;
             color: #2196f3;
             background: #bbdefb;
+            padding: 15px 10px; /* Ajustar padding para texto vertical */
+            border: 4px solid #2196f3;
+            border-radius: 12px;
+            font-size: 1.5em;
+            white-space: nowrap;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            display: flex; /* Para centrar el contenido verticalmente */
+            align-items: center;
+            justify-content: center;
+            
+            /* Posicionamiento en la cuadrícula principal */
+            grid-column: 2; /* Colocar en la segunda columna de malla-container */
+            grid-row: 1 / span 2; /* Abarcar ambas filas (para las columnas de Año 1 y Año 2) */
+            height: 100%; /* Tomar la altura completa de su área de cuadrícula */
+            margin: 0; /* Resetear márgenes del estilo de bloque anterior */
         }
 
         /* Colores de los ámbitos (tonos azules pastel) */
@@ -260,16 +287,29 @@
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            .malla {
-                flex-direction: column;
+            .malla-container {
+                grid-template-columns: 1fr; /* Una sola columna en móvil */
+                flex-direction: column; /* Asegurar apilamiento */
                 align-items: center;
+                width: 100%; /* Ancho completo */
             }
-            .year-group {
+            .year-column {
+                width: 95%; /* Ajustar ancho para móvil */
                 min-width: unset;
-                width: 95%;
             }
-            .bimestres-del-anio {
-                grid-template-columns: 1fr;
+            .year-header {
+                width: 95%; /* Ajustar ancho en móvil */
+                box-sizing: border-box;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .bimestres-grid-container {
+                grid-template-columns: 1fr; /* Una columna en móviles */
+                width: 95%; /* Ocupar casi todo el ancho */
+            }
+            .bimestre {
+                width: 100%; /* Ocupar el 100% del contenedor en móvil */
+                max-width: unset; /* Eliminar límite de ancho */
             }
             .leyenda, .grades-section {
                 padding: 15px;
@@ -277,14 +317,17 @@
             #gradesInputContainer {
                 grid-template-columns: 1fr;
             }
-            .separator, .titulo-final {
+            .titulo-final, .practica-visual-span-in-grid {
                 font-size: 1.2em;
                 padding: 10px 20px;
-                writing-mode: horizontal-tb;
+                width: 95%; /* Ajustar ancho en móvil */
+                margin-left: auto;
+                margin-right: auto;
+                /* Resetear propiedades de grid para móvil si causan problemas */
+                grid-column: auto;
+                grid-row: auto;
+                writing-mode: horizontal-tb; /* Volver a horizontal en móvil */
                 transform: none;
-                border-left: none;
-                border-bottom: 4px solid;
-                margin: 20px auto;
             }
         }
     </style>
@@ -303,8 +346,28 @@
         </div>
     </div>
 
-    <div class="malla" id="malla">
-        <!-- Los grupos de años y bimestres se insertarán aquí por JavaScript -->
+    <div class="malla-container">
+        <!-- PRIMER AÑO -->
+        <div class="year-column" style="grid-column: 1; grid-row: 1;">
+            <div class="year-header">PRIMER AÑO</div>
+            <div class="bimestres-grid-container" id="primer-anio-bimestres-grid">
+                <!-- Bimestres 1-5 se insertarán aquí por JavaScript -->
+            </div>
+        </div>
+
+        <!-- Título Profesional Final -->
+        <div class="titulo-final" style="grid-column: 2; grid-row: 1 / span 2;">
+            TÍTULO PROFESIONAL: TÉCNICO EN PREVENCIÓN DE RIESGOS
+        </div>
+
+        <!-- SEGUNDO AÑO -->
+        <div class="year-column" style="grid-column: 1; grid-row: 2;">
+            <div class="year-header">SEGUNDO AÑO</div>
+            <div class="bimestres-grid-container" id="segundo-anio-bimestres-grid">
+                <!-- Bimestres 6-10 se insertarán aquí por JavaScript -->
+                <!-- El bloque visual de Práctica Profesional se insertará aquí y abarcará columnas -->
+            </div>
+        </div>
     </div>
 
     <!-- La leyenda de ámbitos se mueve aquí, entre la malla y la sección de notas -->
@@ -375,12 +438,10 @@
             { id: 'proyecto_titulacion', nombre: 'PROYECTO DE TITULACIÓN', semestre: 10, ambito: 'reconocimiento', prereq: [], creditos: 8 }, // Prereqs set below
 
             // Separators (using 'semestre' for positioning, but they are not real courses)
-            { id: 'tecnico_separator', nombre: 'TÉCNICO EN PREVENCIÓN DE RIESGOS', semestre: 8.5, separator: true, creditos: 0 },
             { id: 'titulo_profesional_separator', nombre: 'TÍTULO PROFESIONAL: TÉCNICO EN PREVENCIÓN DE RIESGOS', semestre: 10.5, separator: true, creditos: 0 }
         ];
 
         // --- Lógica de Prerrequisitos ---
-        // Se asume que si un curso "abre" otro, entonces el segundo curso tiene al primero como prerrequisito.
         // PRÁCTICA PROFESIONAL requiere todos los cursos desde el Bimestre I hasta el Bimestre VII.
         const prereqsForPracticaProfesional = ramos
             .filter(ramo => ramo.semestre <= 7 && !ramo.separator && ramo.id !== 'practica_profesional' && ramo.id !== 'proyecto_titulacion')
@@ -401,7 +462,6 @@
         }
 
         // Referencias a elementos del DOM
-        const contenedorMalla = document.getElementById('malla');
         const ramosAprobadosCountElement = document.getElementById('ramosAprobadosCount');
         const ppaValueElement = document.getElementById('ppaValue');
         const gradesInputContainer = document.getElementById('gradesInputContainer');
@@ -534,63 +594,37 @@
         }
 
         // --- Lógica de Construcción de la Malla ---
-        const totalAños = 2; // Solo 2 años para esta malla (Primer y Segundo Año)
+        const primerAnioBimestresGridContainer = document.getElementById('primer-anio-bimestres-grid');
+        const segundoAnioBimestresGridContainer = document.getElementById('segundo-anio-bimestres-grid');
 
-        for (let año = 1; año <= totalAños; año++) {
-            const yearGroup = document.createElement('div');
-            yearGroup.className = 'year-group';
-            contenedorMalla.appendChild(yearGroup);
-
-            const anioDiv = document.createElement('div');
-            anioDiv.className = 'anio';
-            anioDiv.innerText = `${getNombreAño(año)} AÑO`;
-            yearGroup.appendChild(anioDiv);
-
-            const bimestresDelAño = document.createElement('div');
-            bimestresDelAño.className = 'bimestres-del-anio';
-            yearGroup.appendChild(bimestresDelAño);
-
-            // Determinar los bimestres para cada año
-            let bimestreInicial, bimestreFinal;
-            if (año === 1) {
-                bimestreInicial = 1;
-                bimestreFinal = 5;
-            } else { // año === 2
-                bimestreInicial = 6;
-                bimestreFinal = 10;
-            }
-
-            for (let i = bimestreInicial; i <= bimestreFinal; i++) {
-                const bim = document.createElement('div');
-                bim.className = 'bimestre';
-                bim.id = 'sem' + i; // Mantener 'sem' para compatibilidad con el ID del ramo
-                const h = document.createElement('h3');
-                h.textContent = `Bimestre ${i}`;
-                bim.appendChild(h);
-                bimestresDelAño.appendChild(bim);
-            }
-
-            // Inserta el separador de TÉCNICO EN PREVENCIÓN DE RIESGOS después del 1er año (Bimestre 8)
-            // Se coloca después del grupo del segundo año, pero antes de los últimos bimestres
-            if (año === 2) { // Después del segundo año (que contiene hasta el Bimestre 10)
-                const tecnicoSeparator = ramos.find(r => r.id === 'tecnico_separator');
-                if (tecnicoSeparator) {
-                    const sepDiv = document.createElement('div');
-                    sepDiv.className = 'separator';
-                    sepDiv.innerText = tecnicoSeparator.nombre;
-                    contenedorMalla.appendChild(sepDiv);
-                }
-            }
+        // Renderizar bimestres del Primer Año
+        for (let i = 1; i <= 5; i++) {
+            const bim = document.createElement('div');
+            bim.className = 'bimestre';
+            bim.id = 'sem' + i;
+            const h = document.createElement('h3');
+            h.textContent = `Bimestre ${i}`;
+            bim.appendChild(h);
+            primerAnioBimestresGridContainer.appendChild(bim);
         }
 
-        // Añade el título profesional al final de la malla principal
-        const tituloProfesionalData = ramos.find(r => r.id === 'titulo_profesional_separator');
-        if (tituloProfesionalData) {
-            const tituloProfesionalDiv = document.createElement('div');
-            tituloProfesionalDiv.className = 'titulo-final';
-            tituloProfesionalDiv.innerText = tituloProfesionalData.nombre;
-            contenedorMalla.appendChild(tituloProfesionalDiv);
+        // Renderizar bimestres del Segundo Año
+        for (let i = 6; i <= 10; i++) {
+            const bim = document.createElement('div');
+            bim.className = 'bimestre';
+            bim.id = 'sem' + i;
+            const h = document.createElement('h3');
+            h.textContent = `Bimestre ${i}`;
+            bim.appendChild(h);
+            segundoAnioBimestresGridContainer.appendChild(bim);
         }
+
+        // Add the visual practice spanning block to the second year grid
+        const practicaVisualSpanInGrid = document.createElement('div');
+        practicaVisualSpanInGrid.className = 'practica-visual-span-in-grid';
+        practicaVisualSpanInGrid.textContent = 'Práctica Profesional';
+        segundoAnioBimestresGridContainer.appendChild(practicaVisualSpanInGrid);
+
 
         // --- Renderizado de Ramos y Inicialización ---
         ramos.forEach(ramo => {
