@@ -84,7 +84,7 @@
             margin-bottom: 10px;
             font-size: 1.5em;
             font-weight: bold;
-            border-bottom: 4px solid #2196f3;
+            border-bottom: 44px solid #2196f3;
             padding-bottom: 5px;
             width: fit-content; /* Ajustar ancho al contenido */
             padding-left: 15px; /* Para que el borde inferior se vea bien */
@@ -95,11 +95,13 @@
         .bimestres-grid-container {
             display: grid;
             grid-template-columns: repeat(5, minmax(180px, 1fr)); /* 5 columnas para los bimestres */
+            grid-template-rows: auto auto; /* Two rows: one for regular courses, one for spanning practice */
             gap: 20px;
             padding: 0; /* No padding here, padding is on year-column */
             width: 100%; /* Ocupar todo el ancho del year-column */
             box-sizing: border-box; /* Incluir padding en el ancho */
             align-items: start; /* Alinear los elementos al inicio de su área de cuadrícula */
+            position: relative; /* Needed for z-index if elements overlap */
         }
 
         .bimestre {
@@ -113,6 +115,7 @@
             height: 100%; /* Llenar la altura de la celda de la cuadrícula */
             border: 1px solid #90caf9;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 1; /* Ensure bimestres are below the spanning practice if they overlap */
         }
         .bimestre h3 {
             text-align: center;
@@ -144,8 +147,8 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Bloque visual para Práctica Profesional que abarca varios bimestres */
-        .practica-visual-span-in-grid {
+        /* Estilos para el ramo de Práctica Profesional que abarca varias celdas */
+        .ramo.practica-spanning-main { /* Renamed for clarity */
             background-color: #bbdefb; /* Azul pastel */
             color: #1a237e; /* Azul oscuro para texto */
             padding: 15px;
@@ -158,9 +161,21 @@
             align-items: center;
             justify-content: center;
             min-height: 80px; /* Altura mínima para que sea visible */
+            
+            /* Positioning using grid properties */
             grid-column: 3 / span 3; /* Abarca desde la columna 3 (Bimestre 8) y se extiende por 3 columnas */
             grid-row: 2; /* Se coloca en la segunda fila de la cuadrícula */
+            z-index: 2; /* Ensure it's on top if there's any overlap */
+
+            /* Removed specific opacity and text-decoration to inherit from .ramo and .ramo.aprobado */
         }
+        /* Asegurar que el ramo de práctica spanning también se vea "aprobado" correctamente */
+        .ramo.practica-spanning-main.aprobado {
+            background-color: #1976d2 !important;
+            color: white;
+            text-decoration: line-through; /* Ensure it gets the strikethrough */
+        }
+
 
         /* Estilos para el Título Profesional Final (ahora es un elemento de la cuadrícula principal) */
         .titulo-final {
@@ -288,28 +303,32 @@
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .malla-container {
-                grid-template-columns: 1fr; /* Una sola columna en móvil */
-                flex-direction: column; /* Asegurar apilamiento */
-                align-items: center;
-                width: 100%; /* Ancho completo */
+                display: flex; /* Switch to flexbox for stacking */
+                flex-direction: column; /* Stack vertically */
+                align-items: center; /* Center items */
+                width: 100%; /* Full width */
+                gap: 20px; /* Maintain gap between stacked elements */
             }
             .year-column {
-                width: 95%; /* Ajustar ancho para móvil */
+                width: 95%; /* Adjust width for mobile */
                 min-width: unset;
             }
             .year-header {
-                width: 95%; /* Ajustar ancho en móvil */
+                width: 95%; /* Adjust width in mobile */
                 box-sizing: border-box;
                 padding-left: 0;
                 padding-right: 0;
             }
             .bimestres-grid-container {
-                grid-template-columns: 1fr; /* Una columna en móviles */
-                width: 95%; /* Ocupar casi todo el ancho */
+                grid-template-columns: 1fr; /* One column in mobiles */
+                width: 95%; /* Occupy almost full width */
+                grid-template-rows: auto; /* Only one row for stacked bimestres in mobile */
+                position: static; /* Reset position for mobile */
             }
             .bimestre {
-                width: 100%; /* Ocupar el 100% del contenedor en móvil */
-                max-width: unset; /* Eliminar límite de ancho */
+                width: 100%; /* Occupy 100% of container in mobile */
+                max-width: unset; /* Remove width limit */
+                min-height: 100px; /* Ensure a minimum height for visibility */
             }
             .leyenda, .grades-section {
                 padding: 15px;
@@ -317,17 +336,29 @@
             #gradesInputContainer {
                 grid-template-columns: 1fr;
             }
-            .titulo-final, .practica-visual-span-in-grid {
+            .titulo-final {
                 font-size: 1.2em;
                 padding: 10px 20px;
-                width: 95%; /* Ajustar ancho en móvil */
+                width: 95%; /* Adjust width in mobile */
                 margin-left: auto;
                 margin-right: auto;
-                /* Resetear propiedades de grid para móvil si causan problemas */
+                /* Reset grid properties for mobile as it's now flex */
                 grid-column: auto;
                 grid-row: auto;
-                writing-mode: horizontal-tb; /* Volver a horizontal en móvil */
+                writing-mode: horizontal-tb; /* Back to horizontal on mobile */
                 transform: none;
+            }
+            .ramo.practica-spanning-main { /* Target the correct class */
+                font-size: 1.2em;
+                padding: 10px 20px;
+                width: 100%; /* Ensure it takes full width of its parent bimestre container */
+                margin: 0; /* Reset margins */
+                /* Reset grid properties for mobile */
+                grid-column: auto;
+                grid-row: auto;
+                min-height: 100px; /* Ensure it has a good height in mobile too */
+                position: static; /* Reset position for mobile */
+                /* Allow text-decoration to be applied by .ramo.aprobado */
             }
         }
     </style>
@@ -365,7 +396,7 @@
             <div class="year-header">SEGUNDO AÑO</div>
             <div class="bimestres-grid-container" id="segundo-anio-bimestres-grid">
                 <!-- Bimestres 6-10 se insertarán aquí por JavaScript -->
-                <!-- El bloque visual de Práctica Profesional se insertará aquí y abarcará columnas -->
+                <!-- El ramo de Práctica Profesional se insertará aquí y abarcará columnas -->
             </div>
         </div>
     </div>
@@ -619,16 +650,9 @@
             segundoAnioBimestresGridContainer.appendChild(bim);
         }
 
-        // Add the visual practice spanning block to the second year grid
-        const practicaVisualSpanInGrid = document.createElement('div');
-        practicaVisualSpanInGrid.className = 'practica-visual-span-in-grid';
-        practicaVisualSpanInGrid.textContent = 'Práctica Profesional';
-        segundoAnioBimestresGridContainer.appendChild(practicaVisualSpanInGrid);
-
-
-        // --- Renderizado de Ramos y Inicialización ---
+        // --- Renderizado de Ramos y Posicionamiento de Práctica Profesional ---
         ramos.forEach(ramo => {
-            if (ramo.separator) return;
+            if (ramo.separator) return; // Skip separators
 
             const div = document.createElement('div');
             div.className = `ramo ${ramo.ambito}`;
@@ -642,11 +666,17 @@
                 div.classList.add('aprobado');
             }
 
-            const bimestreElement = document.getElementById('sem' + ramo.semestre);
-            if (bimestreElement) {
-                bimestreElement.appendChild(div);
+            // Special handling for 'practica_profesional' to make it span
+            if (ramo.id === 'practica_profesional') {
+                div.classList.add('practica-spanning-main'); // Add the new spanning class
+                segundoAnioBimestresGridContainer.appendChild(div); // Append directly to the grid container
             } else {
-                console.warn(`Advertencia: No se encontró el elemento para el bimestre ${ramo.semestre} para el ramo ${ramo.nombre}.`);
+                const bimestreElement = document.getElementById('sem' + ramo.semestre);
+                if (bimestreElement) {
+                    bimestreElement.appendChild(div);
+                } else {
+                    console.warn(`Advertencia: No se encontró el elemento para el bimestre ${ramo.semestre} para el ramo ${ramo.nombre}.`);
+                }
             }
         });
 
